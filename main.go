@@ -14,6 +14,15 @@ type Repository struct {
 	DB *gorm.DB
 }
 
+func (r *Repository) SetupRoutes(app *fiber.App){
+	api := app.Group("/api");
+
+	api.POST("/create_books", r.CreateBook);
+	api.GET("/books", r.GetBooks);
+	api.GET("/get_book/:id", r.GetBook);
+	api.DELETE("/delete_book/:id", r.DeleteBook);
+}
+
 
 func main(){
 
@@ -21,6 +30,10 @@ func main(){
 
 	if err!= nil {
 		log.Fatal(err);
+	}
+
+	r := Repository{
+		DB: db,
 	}
 
 	app := fiber.New();
