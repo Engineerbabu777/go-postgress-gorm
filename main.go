@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-postgress/models"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -42,7 +43,7 @@ func(r Repository) CreateBook(context *fiber.Ctx) error{
 }
 
 func (r *Repository) GetBooks(context *fiber.Ctx) error{
-    var books []Book;
+    var books []models.Books;
 
 	err := r.DB.Find(&books).Error;
 
