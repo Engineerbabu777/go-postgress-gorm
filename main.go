@@ -41,6 +41,20 @@ func(r Repository) CreateBook(context *fiber.Ctx) error{
 	return nil;
 }
 
+func (r *Repository) GetBooks(context *fiber.Ctx) error{
+    var books []Book;
+
+	err := r.DB.Find(&books).Error;
+
+	if err!= nil {
+		context.Status(404).JSON(&fiber.Map{"message":"could not get books"})
+		return err;
+	}
+
+	context.Status(200).JSON(&books);
+	return nil;
+}
+
 func (r *Repository) SetupRoutes(app *fiber.App){
 	api := app.Group("/api");
 
