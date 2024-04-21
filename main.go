@@ -2,7 +2,9 @@ package main
 
 import (
 	"go-postgress/models"
+	"go-postgress/storage"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -65,6 +67,30 @@ func (r *Repository) SetupRoutes(app *fiber.App){
 	api.DELETE("/delete_book/:id", r.DeleteBook);
 }
 
+func (r *Repository) DleteBook(context *fiber.Ctx) error{
+
+	bookModel := models.Book{};
+
+	id := context.Params("id");
+
+	if id == "" {
+		context.Status(504).JSON(&fiber.Map{"message":"book id is required"});
+		return nil;
+	}
+
+	err := r.DB.Delete(bookModel, id);
+
+	if err.Error != nil {
+		context.Status(400).JSON(&fiber.Map{"message":"could not delete book"})
+	}
+
+	// book deleted success!
+	context.Status(200).JSON(&fiber.Map{"message":"book deleted success"})
+
+
+	
+}
+
 
 func main(){
 
@@ -72,6 +98,12 @@ func main(){
 
 	if err!= nil {
 		log.Fatal(err);
+	}
+
+	config := &storage.Config{
+		Host: os.Getenv("DB_HOST"),
+		Port: os.Getenv("DB_PORT"),
+
 	}
 
 	db, err := storage.NewConnection(config)
